@@ -18,7 +18,8 @@
 
   function moduleToNode(name) {
     if (!name) {
-      throw new Error('Expected angular module name');
+      return null;
+      // throw new Error('Expected angular module name');
     }
     if (_modules[name]) {
       return $q.when(_modules[name]);
