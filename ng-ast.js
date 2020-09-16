@@ -140,9 +140,10 @@
 
   function toDot() {
     const prelude = 'digraph {\n  graph [stylesheet="https://g3doc.corp.google.com/frameworks/g3doc/includes/graphviz-style.css"]\n node [shape=box, style=rounded]\n';
-    const epilogue = '}';
+    const epilogue = '\n}\n';
     ngAst('buganizer').then((x) => {
       const lines = [];
+      const visited = new Set();
 
       const parseTree = (root) => {
         if (!root || root.children.length === 0) {
@@ -150,12 +151,16 @@
         }
 
         const name = sanitizeName(toShortName(root.name));
-        const childrenNames = root.children.map((c) => sanitizeName(toShortName(c.name)));
+        
+        if (!visited.has(name)) {
+          visited.add(name);
+          const childrenNames = root.children.map((c) => sanitizeName(toShortName(c.name)));
 
-        lines.push(`  ${name} -> {${childrenNames.join(', ')}}`);
+          lines.push(`  ${name} -> {${childrenNames.join(', ')}}`);
 
-        for (const child of root.children) {
-          parseTree(child);
+          for (const child of root.children) {
+            parseTree(child);
+          }
         }
       };
 
